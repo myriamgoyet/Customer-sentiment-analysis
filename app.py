@@ -1,4 +1,4 @@
-# Pour faire tourner le fichier app.py, il faut utiliser le fichier data_avec_labels.csv dans le dossier data
+# Pour faire tourner le fichier app.py, il faut utiliser le fichier data_with_topics.csv dans le dossier data
 
 import streamlit as st
 import pandas as pd
@@ -16,7 +16,7 @@ import os
 from dotenv import load_dotenv
 
 # ============================== CONFIG ===================================
-DATA_PATH = Path("data\data_avec_labels.csv")
+DATA_PATH = Path("notebooks/data/data_with_topics.csv")
 
 # ============================== PAGE SETUP ==============================
 st.set_page_config(layout="wide", page_title="Restaurant Review Dashboard", page_icon="📊")
@@ -31,10 +31,14 @@ st.markdown("""
 # ============================== LABELISATION =============================
 # Rappel de la liste des labels utilisées par le model
 labels = [
-    'hygiene', 'food quality', 'food', 'staff', 'something is missing',
-    'location', 'speed of service', 'drive-thru', 'temperature of the food',
-    'atmosphere', 'customer service', "temperature" , "price", "speed", "quality", "courtesy",
-]
+    'customer service', 'staff', 'food quality', 'operating hours',
+       'order accuracy', 'location', 'general experience', 'cleanliness',
+       'refund_policy', 'recommendation', 'drive-thru experience', 'security',
+       'advice', 'receipt issue', 'menu', 'customer loyalty',
+       'language barrier', 'waiting time', 'left without ordering',
+       'product availability', 'convenience', 'affordability', 'busyness',
+       'request'
+       ]
 
 # ============================== LOAD DATA ==============================
 @st.cache_data
@@ -174,7 +178,7 @@ You are a manager at McDonald's, responding to client reviews about the restaura
 You need to be extremely polite and speak correct English.
 Thank the client for their review.
 If the review mentions a bad experience, apologize for it and invite the client to come again.
-Limit your answer to two sentences.
+Limit your answer to 3 sentences.
 """
 
 # LangChain pipeline
@@ -192,7 +196,7 @@ chain = template | model | parser  # ✅ Cette variable "chain" est celle à pas
 
 
 # Seuil pour filtrer les labels
-seuil = 0.2
+seuil = 0.3
 
 def render_comments(comments, color_primary, color_secondary, chain, sentiment=""):
     """Render a list of comments in stylized boxes."""
@@ -247,7 +251,7 @@ def compute_nps_value(sentiment):
 
 
 sentiment_mapping = {'positive': 1, 'neutral': 0, 'negative': -1}
-filtered_df["nps_value"] = filtered_df["pred_sentiment"].map(sentiment_mapping).fillna(0)
+filtered_df["nps_value"] = filtered_df["Roberta_label"].map(sentiment_mapping).fillna(0)
 
 
 # Calcul des % par catégorie
@@ -259,7 +263,7 @@ passives_pct = (filtered_df["nps_value"] == 0).mean() * 100
 nps_score = promoters_pct - detractors_pct
 
 ### MAP NPS SCORE pour les bubbles 
-df['nps_val_sentiment'] = df["pred_sentiment"].map(sentiment_mapping).fillna(0)
+df['nps_val_sentiment'] = df["Roberta_label"].map(sentiment_mapping).fillna(0)
 df["review_count"] = df.groupby("store_address")["review"].transform("count")
 filtered_NPS_df = df[df["review_count"] > 100]
 
@@ -292,7 +296,7 @@ with dashboard_tab:
     # ============================== AFFICHAGE DU SCORE NPS GLOBAL ==============================
 
     #====== Appliquer la fonction pour créer une colonne 'nps_value'==========
-    filtered_df["nps_value"] = filtered_df["pred_sentiment"].apply(compute_nps_value)
+    filtered_df["nps_value"] = filtered_df["Roberta_label"].apply(compute_nps_value)
 
     #========= Calculer les pourcentages ===============
     promoters_pct = (filtered_df["nps_value"] == 1).mean() * 100
@@ -355,12 +359,12 @@ with dashboard_tab:
             - Hover over bubbles to explore store details.
         """)
 
-        required_cols = {"latitude", "longitude", "City", "store_address", "pred_sentiment", "clean_reviews"}
+        required_cols = {"latitude", "longitude", "City", "store_address", "Roberta_label", "clean_reviews"}
         if required_cols.issubset(filtered_df.columns):
 
             # Prepare data: drop missing coordinates and compute NPS value
             location_df = filtered_df.dropna(subset=["latitude", "longitude", "store_address"])
-            location_df["nps_value"] = location_df["pred_sentiment"].apply(compute_nps_value)
+            location_df["nps_value"] = location_df["Roberta_label"].apply(compute_nps_value)
 
             # Group by store location
             map_data = location_df.groupby(["store_address","City","State","latitude", "longitude", ]).agg(
@@ -604,12 +608,12 @@ with reviews_tab:
     topics_col1, topics_col2 = st.columns(2)
 
     # ==== Initialisation of the topic dataset
-    positive_df = filtered_df[filtered_df['pred_sentiment'] == 'positive']
+    positive_df = filtered_df[filtered_df['Roberta_label'] == 'positive']
     top_topics_pos = (positive_df[labels] > seuil).sum()
     df_pos = top_topics_pos.reset_index()
     df_pos.columns = ['labels', 'count_positif']
 
-    negative_df = filtered_df[filtered_df['pred_sentiment'] == 'negative']
+    negative_df = filtered_df[filtered_df['Roberta_label'] == 'negative']
     top_topics_neg = (negative_df[labels] > seuil).sum()
     df_neg = top_topics_neg.reset_index()
     df_neg.columns = ['labels', 'count_negatif']
@@ -726,7 +730,7 @@ with reviews_tab:
         else:
             topic_filtered_df = filtered_df
 
-        top_pos_df = topic_filtered_df[topic_filtered_df["pred_sentiment"] == "positive"].sort_values(by='RoBERTa_score', ascending=False)
+        top_pos_df = topic_filtered_df[topic_filtered_df["Roberta_label"] == "positive"].sort_values(by='Roberta_score', ascending=False)
         top_pos = top_pos_df["review"].iloc[st.session_state.positive_start_index:st.session_state.positive_start_index+5]
         render_comments(top_pos, style["bg"], style["text"], chain, sentiment="positive")
 
@@ -761,7 +765,7 @@ with reviews_tab:
         else:
             topic_filtered_df = filtered_df
 
-        top_neg_df = topic_filtered_df[topic_filtered_df["pred_sentiment"] == "negative"].sort_values(by='RoBERTa_score', ascending=False)
+        top_neg_df = topic_filtered_df[topic_filtered_df["Roberta_label"] == "negative"].sort_values(by='Roberta_score', ascending=False)
         top_neg = top_neg_df["review"].iloc[st.session_state.negative_start_index:st.session_state.negative_start_index+5]
         render_comments(top_neg, style["bg"], style["text"], chain, sentiment="negative")
 
