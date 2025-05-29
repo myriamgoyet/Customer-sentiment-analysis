@@ -55,12 +55,12 @@ This project focuses on **sentiment analysis of customer comments** related to M
 
 ## 📁 Project Structure (Example)
 
-customer-sentiment-analysis/
-│
+customer-sentiment-analysis/   
+│   
 ├── data/                   
 ├── notebooks/              
 ├── app/                    
 ├── models/                 
-├── README.md
+├── README.md   
 └── requirements.txt
 
