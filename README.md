@@ -9,8 +9,9 @@ This project focuses on **sentiment analysis of customer comments** related to M
 ### 1. **Volume of Feedback**
 - **Challenge**: Thousands of online customer reviews make it hard to get a global view.
 - **Solution**:  
-  - Automatically collect and classify reviews by **themes** and **sentiments**.
-  - Build a **dashboard** to visualize trends without reading every single review.
+  - Automatically collect and classify reviews by **sentiments**.
+  - Extract main **topics** 
+  - Build a **dashboard** to visualize trends without reading every single review and allow a benchmark between localisations.
 
 ### 2. **Interpretation Difficulties**
 - **Challenges**:
