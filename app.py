@@ -1,4 +1,4 @@
-# Pour faire tourner le fichier app.py, il faut utiliser le fichier data_with_topics.csv dans le dossier data
+# To run the app.py file, you need to use the data_with_topics.csv file located in the data folder
 
 import streamlit as st
 import pandas as pd
@@ -29,7 +29,7 @@ st.markdown("""
 
 
 # ============================== LABELISATION =============================
-# Rappel de la liste des labels utilisées par le model
+# recall of lables list
 labels = [
     'customer service', 'staff', 'food quality', 'operating hours',
        'order accuracy', 'location', 'general experience', 'cleanliness',
@@ -195,7 +195,7 @@ parser = StrOutputParser()
 chain = template | model | parser  # ✅ Cette variable "chain" est celle à passer à render_comments
 
 
-# Seuil pour filtrer les labels
+# Threshold to filter labels on most accurate once
 seuil = 0.3
 
 def render_comments(comments, color_primary, color_secondary, chain, sentiment=""):
@@ -203,22 +203,22 @@ def render_comments(comments, color_primary, color_secondary, chain, sentiment="
     for index, comment in comments.items():
         if index not in filtered_df.index:
             continue
-        # Récupérer les labels avec un score supérieur au seuil pour ce commentaire
+        # only keep lables with a score higher than threshold
         labels_above_threshold = filtered_df[labels].loc[index] > seuil
         selected_labels = filtered_df[labels].columns[labels_above_threshold].tolist()
         labels_str = " ".join([f"#{label}" for label in selected_labels])
         formatted_comment = comment.replace('\n', ' ')
 
-        # Générer une clé unique
+        # Generate unique key
         hash_key = hashlib.md5(f"{index}-{comment}-{sentiment}".encode()).hexdigest()[:8]
         unique_key = f"show_reply_{hash_key}"
 
-        # Conteneur visuel du commentaire
+        # Conteneur pf the comment
         st.markdown(f"<div style='background-color:{color_primary}; padding:10px; border-radius:10px; margin-bottom:10px;'>", unsafe_allow_html=True)
         st.markdown(f"<div style='color:{color_primary};'>💬 {formatted_comment}</div>", unsafe_allow_html=True)
         st.markdown(f"<p style='color:{color_secondary}; font-weight: bold;'>{labels_str}</p>", unsafe_allow_html=True)
 
-        # Bouton qui déclenche la génération via LLM
+        # Botton to generate answer with LLM
         if st.button("Generate an answer", key=unique_key):
             with st.spinner("Loading answer..."):
                 generated_response = chain.invoke({"text": formatted_comment})
