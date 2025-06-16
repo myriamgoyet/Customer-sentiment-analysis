@@ -1,4 +1,4 @@
-# To run the app.py file localy, you need to use the data_with_topics.csv file located in the data folder
+# This app.py file app uses a dataset hosted on Google Drive to allow it deployment on Hugging Face
 
 import streamlit as st
 import pandas as pd
@@ -16,7 +16,7 @@ import os
 from dotenv import load_dotenv
 
 # ============================== CONFIG ===================================
-DATA_PATH = Path("notebooks/data/data_with_topics.csv")
+DATA_URL = "https://drive.google.com/uc?export=download&id=1Ugx6aZN38QfXRIAZ6Tw-tFH5QcT6Wi0e"
 
 # ============================== PAGE SETUP ==============================
 st.set_page_config(layout="wide", page_title="Restaurant Review Dashboard", page_icon="📊")
@@ -42,10 +42,10 @@ labels = [
 
 # ============================== LOAD DATA ==============================
 @st.cache_data
-def load_data(path: Path):
+def load_data(url: str):
     """Load review data from a CSV file with basic preprocessing."""
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(url)
         df.columns = df.columns.str.strip()  # Clean column names
         df.drop(columns=["Unnamed: 0"], errors="ignore", inplace=True)
         df["review_date"] = pd.to_datetime(df["review_date"])
@@ -187,10 +187,9 @@ template = ChatPromptTemplate.from_messages([
     ("user", "{text}"),
 ])
 
-# MISTRAL API KEY: real key is saved in the .env
-load_dotenv()
-mistral_api_key = os.getenv("MISTRAL_API_KEY")
-model = ChatMistralAI(model="mistral-small-latest",mistral_api_key=mistral_api_key)
+# Read API KEY from secret variables in Hugging Face
+mistral_api_key = open('/etc/secrets/MISTRAL_API_KEY').read().strip()
+model = ChatMistralAI(model="mistral-small-latest", mistral_api_key=mistral_api_key)
 parser = StrOutputParser()
 chain = template | model | parser  # ✅ Cette variable "chain" est celle à passer à render_comments
 
@@ -228,7 +227,7 @@ def render_comments(comments, color_primary, color_secondary, chain, sentiment="
         st.markdown("</div>", unsafe_allow_html=True)
 # ============================== MAIN APP ==============================
 with st.spinner("Loading data..."):
-    df = load_data(DATA_PATH)
+    df = load_data(DATA_URL)
 
 if df.empty:
     st.warning("No data available. Please check the source file.")

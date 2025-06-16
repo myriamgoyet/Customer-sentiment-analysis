@@ -1,0 +1,12 @@
+transformers
+streamlit
+pandas
+plotly
+plotly.express
+plotly.graph_objects
+matplotlib.pyplot
+seaborn
+pathlib
+datetime
+nltk
+python-dotenv
