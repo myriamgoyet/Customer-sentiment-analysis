@@ -1,0 +1,22 @@
+{"index": 2, "intents": ["order fast", "food ready fast"]}
+{"index": 3, "intents": ["fast food", "cheap food", "eats"]}
+{"index": 30, "intents": ["want food", "want happy meal", "dont want toy"]}
+{"index": 31, "intents": {"intents": ["avoid", "unhygienic staff", "bad food", "long drive", "prefer other restaurants"]}}
+{"index": 51, "intents": ["bad service"]}
+{"index": 71, "intents": {"intents": ["request information", "report problem", "complain"]}}
+{"index": 86, "intents": [{"intent": "eat"}, {"intent": "rest"}]}
+{"index": 132, "intents": ["long wait", "rude staff", "unprofessional crew"]}
+{"index": 1, "intents": [{"intent": "eat"}, {"intent": "rest"}]}
+{"index": 17, "intents": ["earn points", "app usage"]}
+{"index": 42, "intents": ["always busy", "moves fast", "good food"]}
+{"index": 69, "intents": {"intents": ["order delivery", "starving", "energy", "happy", "eat", "feel good", "find everything", "missing"]}}
+{"index": 101, "intents": [{"intent": "dirty restroom"}, {"intent": "slow service"}]}
+{"index": 102, "intents": ["enjoy food", "appreciate service"]}
+{"index": 103, "intents": ["order quality", "food temperature"]}
+{"index": 126, "intents": [{"intent": "long wait time"}, {"intent": "poor communication"}, {"intent": "rude staff"}, {"intent": "bad service"}, {"intent": "poor atmosphere"}]}
+{"index": 127, "intents": ["good quality", "cheap price"]}
+{"index": 128, "intents": {"intents": ["order food", "experience atmosphere", "staff friendliness", "staff accommodation", "staff smiling", "pleasant experience", "compare fast food places"]}}
+{"index": 137, "intents": ["fast food", "cleanliness", "price", "convenience", "location"]}
+{"index": 138, "intents": {"intents": ["request_help", "order_taken", "staff_walked_away"]}}
+{"index": 149, "intents": {"intents": ["rude staff", "bad experience", "bad food"]}}
+{"index": 152, "intents": [{"intent": "staff behavior"}, {"intent": "cleanliness"}]}
