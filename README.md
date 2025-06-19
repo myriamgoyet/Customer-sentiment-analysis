@@ -59,10 +59,11 @@ This project focuses on **sentiment analysis of customer comments** related to M
 
 customer-sentiment-analysis/   
 │                    
-├── notebooks/data/  
+├── notebooks/  
+│      └──data/   
 ├── app.py   
-├── .streamlit/
-└── README.md  
+├── .streamlit/   
+└── README.md     
 
 ## 📊 Dashboard
 👉[Click here to see Streamlit dashboard hosted on Hugging Face ![image](https://github.com/user-attachments/assets/bfeddf26-6d55-4965-93da-3e5944e677c6)](https://huggingface.co/spaces/myriamgoyet/Sentiment_Analysis)
